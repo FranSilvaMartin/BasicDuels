@@ -1,0 +1,33 @@
+# Archivos de configuración de Eclipse
+.classpath
+.project
+.settings/
+
+# Archivos de configuración de IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Carpeta de archivos compilados
+bin/
+
+# Carpeta de dependencias de Maven
+# Asegúrate de ajustar esto según el nombre de tu carpeta de dependencias
+lib/
+
+# Carpeta de archivos generados por Gradle
+# Asegúrate de ajustar esto según la estructura de tu proyecto
+build/
+
+# Archivos de respaldo y temporales
+*~
+*.swp
+
+# Archivos de registro
+*.log
+
+# Carpeta de configuración de Visual Studio Code
+.vscode/
+
+# Carpeta target generada por proyectos de construcción de Maven o Gradle
+target/
