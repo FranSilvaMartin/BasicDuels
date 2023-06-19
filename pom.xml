@@ -28,11 +28,11 @@
 
 	<dependencies>
 		<dependency>
-    <groupId>io.papermc.paper</groupId>
-    <artifactId>paper-api</artifactId>
-    <version>1.20.1-R0.1-SNAPSHOT</version>
-    <scope>provided</scope>
-	</dependency>
+    		<groupId>io.papermc.paper</groupId>
+    		<artifactId>paper-api</artifactId>
+    		<version>1.20.1-R0.1-SNAPSHOT</version>
+    		<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
@@ -42,27 +42,26 @@
 
 	<build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.0.2</version>
+				<version>3.3.0</version>
 				<configuration>
 					<outputDirectory>E:\Documentos\MC Server\plugins</outputDirectory>
 				</configuration>
-				
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -75,6 +74,11 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+			</plugin>
         </plugins>
         <resources>
             <resource>
@@ -83,4 +87,13 @@
             </resource>
         </resources>
     </build>
+
+	<profiles>
+		<profile>
+			<id>warnings</id>
+			<properties>
+				<maven.plugin.validation>VERBOSE</maven.plugin.validation>
+			</properties>
+		</profile>
+	</profiles>
 </project>
