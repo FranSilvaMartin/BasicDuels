@@ -9,8 +9,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +45,7 @@ public class DuelManager {
     }
 
     @SuppressWarnings("deprecation")
-    public void sendDuelRequest(Player sender, Player receiver) {
+    public void sendDuelRequest(Player sender, Player receiver, DuelGamemode duelGamemode) {
         int duelID = duelRequests.size() + 1;
 
         if (sender == receiver) {
@@ -158,6 +161,60 @@ public class DuelManager {
         sender.teleport(arena.getLocationPlayer1());
         receiver.teleport(arena.getLocationPlayer2());
 
+        sender.sendMessage(ColorUtils.colorize("&3The duel has started."));
+        receiver.sendMessage(ColorUtils.colorize("&3The duel has started."));
+
+        sender.getInventory().clear();
+        receiver.getInventory().clear();
+        sender.getInventory().setArmorContents(null);
+        receiver.getInventory().setArmorContents(null);
+
+        sender.setHealth(20);
+        receiver.setHealth(20);
+        sender.setFoodLevel(20);
+        receiver.setFoodLevel(20);
+
+        sender.setGameMode(GameMode.SURVIVAL);
+        receiver.setGameMode(GameMode.SURVIVAL);
+
+        sender.setAllowFlight(false);
+        receiver.setAllowFlight(false);
+
+        sender.setFlying(false);
+        receiver.setFlying(false);
+
+        sender.setFireTicks(0);
+        receiver.setFireTicks(0);
+
+        sender.setSaturation(20);
+        receiver.setSaturation(20);
+
+        sender.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
+        sender.getInventory().addItem(new ItemStack(Material.BOW));
+        sender.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+        sender.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
+        sender.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
+        sender.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
+        sender.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
+
+        sender.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+        sender.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
+        sender.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+        sender.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+
+        receiver.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
+        receiver.getInventory().addItem(new ItemStack(Material.BOW));
+        receiver.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+        receiver.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
+        receiver.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
+        receiver.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
+        receiver.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
+
+        receiver.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+        receiver.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
+        receiver.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+        receiver.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+
         int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.STARTED) {
                 finishDuel(duelID);
@@ -166,7 +223,6 @@ public class DuelManager {
                 receiver.sendMessage(ColorUtils.colorize("&3The duel has finished. "));
             }
         }, 20 * 60);
-
         duel.setTaskID(taskID);
     }
 
@@ -252,6 +308,24 @@ public class DuelManager {
         duel.getArena().setInUse(false);
 
         Location location = new Location(Bukkit.getWorld("world"), 3165, 63.00, 4096);
+
+        duel.getPlayer1().getInventory().setArmorContents(null);
+        duel.getPlayer2().getInventory().setArmorContents(null);
+        duel.getPlayer1().getInventory().clear();
+        duel.getPlayer2().getInventory().clear();
+
+        duel.getPlayer1().setFireTicks(0);
+        duel.getPlayer2().setFireTicks(0);
+
+        duel.getPlayer1().setHealth(20);
+        duel.getPlayer2().setHealth(20);
+
+        duel.getPlayer1().setFoodLevel(20);
+        duel.getPlayer2().setFoodLevel(20);
+
+        duel.getPlayer1().setSaturation(20);
+        duel.getPlayer2().setSaturation(20);
+
         duel.getPlayer1().teleport(location);
         duel.getPlayer2().teleport(location);
         Bukkit.getScheduler().cancelTask(duel.getTaskID());

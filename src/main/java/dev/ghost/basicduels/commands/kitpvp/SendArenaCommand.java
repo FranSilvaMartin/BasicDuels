@@ -6,9 +6,10 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import dev.ghost.basicduels.BasicDuels;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
+import dev.ghost.basicduels.menusystem.menu.DuelMenu;
+import dev.ghost.basicduels.utils.ColorUtils;
 
 @CommandInfo(name = "send", isSubCommand = true, desc = "Create an arena", perm = "kitpvp.commands.createarena", usage = "<name>")
 public class SendArenaCommand extends CommandManager {
@@ -25,9 +26,7 @@ public class SendArenaCommand extends CommandManager {
             return;
         }
 
-        // Arena List
-
-        BasicDuels.getInstance().duelManager.sendDuelRequest(player, Bukkit.getPlayer(args[0]));
+        new DuelMenu(ColorUtils.getPlayerMenuUtility(player), Bukkit.getPlayer(args[0])).open();
     }
 
     public List<String> onTabComplete(Player player, String[] args) {
