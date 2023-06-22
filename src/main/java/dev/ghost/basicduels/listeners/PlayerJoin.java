@@ -8,6 +8,11 @@ import dev.ghost.basicduels.utils.PlayerSavings;
 
 public class PlayerJoin implements Listener {
 
+    /**
+     * Restaura los datos del jugador al unirse
+     * 
+     * @param event Evento de unirse
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         PlayerSavings.getInstance().restorePlayer(event.getPlayer());

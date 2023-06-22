@@ -14,7 +14,7 @@ public @interface CommandInfo {
 
     String perm() default "";
 
-    String[] usage() default {};
+    String usage() default "";
 
     String[] aliases() default {};
 

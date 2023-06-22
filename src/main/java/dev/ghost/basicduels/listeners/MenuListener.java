@@ -9,23 +9,23 @@ import dev.ghost.basicduels.menusystem.Menu;
 
 public class MenuListener implements Listener {
 
+    /**
+     * Evento de clickear en un menú (inventario)
+     * Comprueba si el inventario es un menú y si lo es, llama al método handleMenu
+     * 
+     * @param e Evento de clickear en un inventario
+     */
     @EventHandler
-    public void onMenuClick(InventoryClickEvent e){
-
+    public void onMenuClick(InventoryClickEvent e) {
         InventoryHolder holder = e.getInventory().getHolder();
-        //If the inventoryholder of the inventory clicked on
-        // is an instance of Menu, then gg. The reason that
-        // an InventoryHolder can be a Menu is because our Menu
-        // class implements InventoryHolder!!
+
         if (holder instanceof Menu) {
-            e.setCancelled(true); //prevent them from fucking with the inventory
-            if (e.getCurrentItem() == null) { //deal with null exceptions
+            e.setCancelled(true);
+            if (e.getCurrentItem() == null) {
                 return;
             }
-            //Since we know our inventoryholder is a menu, get the Menu Object representing
-            // the menu we clicked on
+
             Menu menu = (Menu) holder;
-            //Call the handleMenu object which takes the event and processes it
             menu.handleMenu(e);
         }
 

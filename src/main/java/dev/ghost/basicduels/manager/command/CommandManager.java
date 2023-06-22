@@ -27,6 +27,7 @@ public abstract class CommandManager extends Command {
         setName(info.name());
         setDescription(info.desc());
         setAliases(Arrays.asList(info.aliases()));
+        setUsage(info.name() + " " + info.usage());
         permissionMessage(Component.text("You do not have permission to run this command."));
     }
 
@@ -63,7 +64,7 @@ public abstract class CommandManager extends Command {
      * @return Uso del comando
      */
     public String getUsage() {
-        return Arrays.toString(info.usage());
+        return info.usage();
     }
 
     /**

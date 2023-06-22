@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -167,58 +166,8 @@ public class DuelManager {
 
         sender.sendMessage(ColorUtils.colorize("&3The duel has started."));
         receiver.sendMessage(ColorUtils.colorize("&3The duel has started."));
-
-        sender.getInventory().clear();
-        receiver.getInventory().clear();
-        sender.getInventory().setArmorContents(null);
-        receiver.getInventory().setArmorContents(null);
-
-        sender.setHealth(20);
-        receiver.setHealth(20);
-        sender.setFoodLevel(20);
-        receiver.setFoodLevel(20);
-
-        sender.setGameMode(GameMode.SURVIVAL);
-        receiver.setGameMode(GameMode.SURVIVAL);
-
-        sender.setAllowFlight(false);
-        receiver.setAllowFlight(false);
-
-        sender.setFlying(false);
-        receiver.setFlying(false);
-
-        sender.setFireTicks(0);
-        receiver.setFireTicks(0);
-
-        sender.setSaturation(20);
-        receiver.setSaturation(20);
-
-        sender.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
-        sender.getInventory().addItem(new ItemStack(Material.BOW));
-        sender.getInventory().addItem(new ItemStack(Material.ARROW, 64));
-        sender.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
-        sender.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
-        sender.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
-        sender.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
-
-        sender.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        sender.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
-        sender.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
-        sender.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
-
-        receiver.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
-        receiver.getInventory().addItem(new ItemStack(Material.BOW));
-        receiver.getInventory().addItem(new ItemStack(Material.ARROW, 64));
-        receiver.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
-        receiver.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
-        receiver.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
-        receiver.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
-
-        receiver.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        receiver.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
-        receiver.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
-        receiver.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
-
+        addItems(sender, receiver);
+        
         int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.STARTED) {
                 finishDuel(duelID);
@@ -315,5 +264,58 @@ public class DuelManager {
         PlayerSavings.getInstance().restorePlayer(duel.getPlayer2());
 
         Bukkit.getScheduler().cancelTask(duel.getTaskID());
+    }
+
+    private void addItems(Player sender, Player receiver) {
+        sender.getInventory().clear();
+        receiver.getInventory().clear();
+        sender.getInventory().setArmorContents(null);
+        receiver.getInventory().setArmorContents(null);
+
+        sender.setHealth(20);
+        receiver.setHealth(20);
+        sender.setFoodLevel(20);
+        receiver.setFoodLevel(20);
+
+        sender.setGameMode(GameMode.SURVIVAL);
+        receiver.setGameMode(GameMode.SURVIVAL);
+
+        sender.setAllowFlight(false);
+        receiver.setAllowFlight(false);
+
+        sender.setFlying(false);
+        receiver.setFlying(false);
+
+        sender.setFireTicks(0);
+        receiver.setFireTicks(0);
+
+        sender.setSaturation(20);
+        receiver.setSaturation(20);
+
+        sender.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
+        sender.getInventory().addItem(new ItemStack(Material.BOW));
+        sender.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+        sender.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
+        sender.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
+        sender.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
+        sender.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
+
+        sender.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+        sender.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
+        sender.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+        sender.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
+
+        receiver.getInventory().addItem(new ItemStack(Material.DIAMOND_SWORD));
+        receiver.getInventory().addItem(new ItemStack(Material.BOW));
+        receiver.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+        receiver.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE, 5));
+        receiver.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
+        receiver.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
+        receiver.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
+
+        receiver.getInventory().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+        receiver.getInventory().setChestplate(new ItemStack(Material.DIAMOND_CHESTPLATE));
+        receiver.getInventory().setLeggings(new ItemStack(Material.DIAMOND_LEGGINGS));
+        receiver.getInventory().setBoots(new ItemStack(Material.DIAMOND_BOOTS));
     }
 }

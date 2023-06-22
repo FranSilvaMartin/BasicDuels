@@ -12,6 +12,10 @@ import dev.ghost.basicduels.manager.command.CommandManager;
 @CommandInfo(name = "deny", isSubCommand = true, desc = "Create an arena", perm = "kitpvp.commands.createarena", usage = "<name>")
 public class DenyArenaCommand extends CommandManager {
 
+    /**
+     * Deniega el duelo que le ha enviado un jugador, si el duelo no existe o ha sido
+     * cancelado, se le notificará al jugador
+     */
     public void onCommand(Player player, String[] args) {
         if (args.length == 0 || !args[0].matches("[0-9]+")) {
             sendErrorMessage(player, "Duelo no encontrado o cancelado.");
@@ -22,6 +26,9 @@ public class DenyArenaCommand extends CommandManager {
         BasicDuels.getInstance().duelManager.denyDuelRequest(id);
     }
 
+    /**
+     * No hay sugerencias para este comando
+     */
     public List<String> onTabComplete(Player player, String[] args) {
         List<String> suggestions = new ArrayList<String>();
         return suggestions;

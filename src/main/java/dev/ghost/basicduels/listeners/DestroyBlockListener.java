@@ -8,12 +8,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import dev.ghost.basicduels.BasicDuels;
 
 public class DestroyBlockListener implements Listener {
-    
-    public DestroyBlockListener() {
-    }
 
+    /**
+     * Cancela el evento de romper bloques si el jugador está en un duelo
+     * 
+     * @param event Evento de romper bloques
+     */
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event){
+    public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
         boolean isPlayerInDuel = BasicDuels.getInstance().duelManager.isPlayerInDuel(player);
@@ -23,5 +25,5 @@ public class DestroyBlockListener implements Listener {
             return;
         }
     }
-    
+
 }
