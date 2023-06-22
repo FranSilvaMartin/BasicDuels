@@ -17,6 +17,7 @@ import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
 import dev.ghost.basicduels.manager.duel.DuelManager;
 import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.PlayerSavings;
 
 public class BasicDuels extends JavaPlugin {
 
@@ -28,6 +29,7 @@ public class BasicDuels extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new PlayerSavings(this);
         ColorUtils.sendConsoleMessage("&aStarting BasicDuels...");
         setupSimpleCommandMap();
 

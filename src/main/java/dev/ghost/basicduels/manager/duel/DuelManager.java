@@ -2,6 +2,7 @@ package dev.ghost.basicduels.manager.duel;
 
 import dev.ghost.basicduels.BasicDuels;
 import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.PlayerSavings;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -146,6 +147,9 @@ public class DuelManager {
                 ColorUtils.colorize("&3You have accepted the duel request from &f" + receiver.getName() + "&3."));
         receiver.sendMessage(
                 ColorUtils.colorize("&3You have accepted the duel request from &f" + sender.getName() + "&3."));
+
+        PlayerSavings.getInstance().savePlayer(sender);
+        PlayerSavings.getInstance().savePlayer(receiver);
 
         startDuel(duelID);
     }
@@ -307,27 +311,9 @@ public class DuelManager {
 
         duel.getArena().setInUse(false);
 
-        Location location = new Location(Bukkit.getWorld("world"), 3165, 63.00, 4096);
+        PlayerSavings.getInstance().restorePlayer(duel.getPlayer1());
+        PlayerSavings.getInstance().restorePlayer(duel.getPlayer2());
 
-        duel.getPlayer1().getInventory().setArmorContents(null);
-        duel.getPlayer2().getInventory().setArmorContents(null);
-        duel.getPlayer1().getInventory().clear();
-        duel.getPlayer2().getInventory().clear();
-
-        duel.getPlayer1().setFireTicks(0);
-        duel.getPlayer2().setFireTicks(0);
-
-        duel.getPlayer1().setHealth(20);
-        duel.getPlayer2().setHealth(20);
-
-        duel.getPlayer1().setFoodLevel(20);
-        duel.getPlayer2().setFoodLevel(20);
-
-        duel.getPlayer1().setSaturation(20);
-        duel.getPlayer2().setSaturation(20);
-
-        duel.getPlayer1().teleport(location);
-        duel.getPlayer2().teleport(location);
         Bukkit.getScheduler().cancelTask(duel.getTaskID());
     }
 }
