@@ -1,0 +1,13 @@
+# LANGUAGE: English
+
+# To use these placeholders, you need to download them from the PlaceholderAPI expansion Player!
+# Execute Command: /papi ecloud download Player & /papi reload
+broadcast:
+  announce: "%player_name% joined the lobby!"
+  open: "Event is open! Join using /lms join, GL HF!"
+  
+config: # dasdasd
+  count: 5
+#To use these placeholders, you need to do
+#wnload them from the PlaceholderAPI expansion cloud!
+#To use these placeholders, you need to download them from the PlaceholderAPI expansion cloud!
