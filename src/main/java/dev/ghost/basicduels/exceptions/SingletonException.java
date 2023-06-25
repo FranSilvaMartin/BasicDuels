@@ -1,4 +1,4 @@
-package dev.ghost.basicduels.utils;
+package dev.ghost.basicduels.exceptions;
 
 public class SingletonException extends RuntimeException {
 

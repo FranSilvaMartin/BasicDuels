@@ -1,5 +1,6 @@
 package dev.ghost.basicduels;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
@@ -12,11 +13,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
+import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
 import dev.ghost.basicduels.manager.duel.DuelManager;
-import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.Utils;
 import dev.ghost.basicduels.utils.PlayerSavings;
 
 public class BasicDuels extends JavaPlugin {
@@ -29,57 +31,96 @@ public class BasicDuels extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        new PlayerSavings(this);
-        ColorUtils.sendConsoleMessage("&aStarting BasicDuels...");
-        setupSimpleCommandMap();
+        Utils.sendConsoleMessage("&aStarting BasicDuels...");
 
-        registerCommands();
-        ColorUtils.sendConsoleMessage("");
-        registerListeners();
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlayerSavings(this);
+            setupSimpleCommandMap();
+            registerConfig();
 
-        Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
-        Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
-        Arena arena = new Arena(1, "Oasis", location, location2);
-        duelManager = new DuelManager(this);
-        duelManager.addArena(arena);
+            registerCommands();
+            registerListeners();
+
+            Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
+            Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
+            Arena arena = new Arena(1, "Oasis", location, location2);
+            duelManager = new DuelManager(this);
+            duelManager.addArena(arena);
+            Utils.sendConsoleMessage("&aBasicDuels is ready");
+        } else {
+            getLogger().severe("Could not find PlaceholderAPI! This plugin is required.");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override
     public void onDisable() {
         instance = this;
-        ColorUtils.sendConsoleMessage("&cStopping BasicDuels...");
+        Utils.sendConsoleMessage("&cStopping BasicDuels...");
     }
 
     private void registerCommands() {
-        ColorUtils.sendConsoleMessage("&3Registering commands....");
         String packageName = this.getClass().getPackage().getName();
+        String commands = "";
         for (Class<?> clazz : new Reflections(packageName + ".commands").getSubTypesOf(CommandManager.class)) {
             try {
                 Command command = (Command) clazz.getDeclaredConstructor().newInstance();
                 CommandInfo commandInfo = clazz.getAnnotation(CommandInfo.class);
 
                 if (commandInfo != null && !commandInfo.isSubCommand()) {
-                    ColorUtils.sendConsoleMessage("&a + &8Command " + clazz.getSimpleName());
+                    commands += clazz.getSimpleName() + ", ";
                     simpleCommandMap.register("pluginname", command);
                 }
             } catch (Exception e) {
-                ColorUtils.sendConsoleMessage("&cFailed to register command " + clazz.getSimpleName());
+                Utils.sendConsoleMessage("&cFailed to register command " + clazz.getSimpleName());
             }
         }
+        Utils.sendConsoleMessage("  ⚙️ &3Registering commands: &8" + commands);
+
     }
 
     private void registerListeners() {
-        ColorUtils.sendConsoleMessage("&3Registering listeners....");
         String packageName = this.getClass().getPackage().getName();
+        String listeners = "";
         for (Class<?> clazz : new Reflections(packageName + ".listeners").getSubTypesOf(Listener.class)) {
             try {
                 Listener listener = (Listener) clazz.getDeclaredConstructor().newInstance();
                 pluginManager.registerEvents(listener, this);
-                ColorUtils.sendConsoleMessage("&a + &8Listener " + clazz.getSimpleName());
+
+                listeners += clazz.getSimpleName() + ", ";
             } catch (Exception e) {
-                ColorUtils.sendConsoleMessage("&cFailed to register listener " + clazz.getSimpleName());
+                Utils.sendConsoleMessage("&cFailed to register listener " + clazz.getSimpleName());
             }
         }
+
+        Utils.sendConsoleMessage("  🎉 &3Registering listeners: &8" + listeners);
+    }
+
+    private void registerConfig() {
+        ConfigManager.getInstance().setPlugin(this);
+        ConfigManager.getInstance().getConfig("config.yml");
+
+        File languageFolder = new File(this.getDataFolder() + File.separator + "language");
+        if (!languageFolder.exists()) {
+            languageFolder.mkdirs();
+        }
+
+        File[] languageFiles = languageFolder.listFiles();
+        String[] languages = { "en.yml", "es.yml" };
+
+        for (String lang : languages) {
+            ConfigManager.getInstance().getConfig("language" + File.separator + lang);
+        }
+
+        String list = "";
+        for (File lang : languageFiles) {
+            ConfigManager.getInstance().getConfig("language" + File.separator + lang.getName());
+            String[] name = lang.getName().split("\\.");
+
+            list += name[0] + ", ";
+        }
+
+        Utils.sendConsoleMessage("  🚩 &3Loading languages: &8" + list);
     }
 
     private void setupSimpleCommandMap() {

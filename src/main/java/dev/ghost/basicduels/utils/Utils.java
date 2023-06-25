@@ -1,5 +1,10 @@
 package dev.ghost.basicduels.utils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -8,7 +13,7 @@ import org.bukkit.entity.Player;
 import dev.ghost.basicduels.menusystem.PlayerMenuUtility;
 import net.md_5.bungee.api.ChatColor;
 
-public class ColorUtils {
+public class Utils {
 
     public static String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
@@ -35,5 +40,27 @@ public class ColorUtils {
             return playerMenuUtilityMap.get(p); //Return the object by using the provided player
         }
     }
+
+    public static File inputStreamToFile(InputStream input, String fileName) {
+        try {
+            File file = File.createTempFile(fileName, "");
+            file.deleteOnExit();
     
+            try (OutputStream output = new FileOutputStream(file)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+            }
+    
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return null;
+    }
+
+
 }
