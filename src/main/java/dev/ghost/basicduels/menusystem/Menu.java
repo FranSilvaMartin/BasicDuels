@@ -8,7 +8,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.Utils;
 import net.kyori.adventure.text.Component;
 
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public abstract class Menu implements InventoryHolder {
         // The owner of the inventory created is the Menu itself,
         // so we are able to reverse engineer the Menu object from the
         // inventoryHolder in the MenuListener class when handling clicks
-        inventory = Bukkit.createInventory(this, getSlots(), ColorUtils.colorize(getMenuName()));
+        inventory = Bukkit.createInventory(this, getSlots(), Utils.colorize(getMenuName()));
 
         // grab all the items specified to be used for this menu and add to inventory
         this.setMenuItems();
@@ -77,7 +77,7 @@ public abstract class Menu implements InventoryHolder {
 
         ItemStack item = new ItemStack(material);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.displayName(Component.text(ColorUtils.colorize(displayName)));
+        itemMeta.displayName(Component.text(Utils.colorize(displayName)));
 
         itemMeta.setLore(Arrays.asList(lore));
         item.setItemMeta(itemMeta);

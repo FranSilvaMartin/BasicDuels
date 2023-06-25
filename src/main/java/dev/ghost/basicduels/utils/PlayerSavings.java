@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import dev.ghost.basicduels.exceptions.SingletonException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

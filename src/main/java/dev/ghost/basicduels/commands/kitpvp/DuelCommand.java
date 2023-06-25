@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import net.md_5.bungee.api.ChatColor;
@@ -15,6 +16,7 @@ public class DuelCommand extends CommandManager {
     private List<CommandManager> subCommands = new ArrayList<CommandManager>();
     private CommandInfo commandInfo = getClass().getAnnotation(CommandInfo.class);
 
+    // Constructor de la clase y añade los sub-comandos
     public DuelCommand() {
         subCommands.add(new SendArenaCommand());
         subCommands.add(new FinishArenaCommand());
@@ -22,6 +24,7 @@ public class DuelCommand extends CommandManager {
         subCommands.add(new DenyArenaCommand());
     }
 
+    // Ejecuta el comando
     public void onCommand(Player player, String[] args) {
         if (args.length == 0) {
             for (CommandManager command : subCommands) {
@@ -30,6 +33,7 @@ public class DuelCommand extends CommandManager {
                 String description = ChatColor.GRAY + command.getDescription();
                 sendInfoMessage(player, "/" + commandInfo.name() + " " + name + " " + usage + " - " + description);
             }
+            player.sendMessage(ConfigManager.getInstance().getMessage("broadcast.announce", player));
             return;
         }
 
@@ -52,6 +56,9 @@ public class DuelCommand extends CommandManager {
         subCommand.onCommand(player, newArgs.toArray(new String[newArgs.size()]));
     }
 
+    /*
+     * Devuelve una lista de sugerencias para el comando
+     */
     public List<String> onTabComplete(Player p, String[] args) {
         if (args.length == 1) {
             List<String> suggestions = new ArrayList<String>();

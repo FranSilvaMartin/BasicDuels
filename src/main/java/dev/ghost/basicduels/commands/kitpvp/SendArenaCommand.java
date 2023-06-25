@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.menusystem.menu.DuelMenu;
-import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.Utils;
 
 @CommandInfo(name = "send", isSubCommand = true, desc = "Create an arena", perm = "kitpvp.commands.createarena", usage = "<playername>")
 public class SendArenaCommand extends CommandManager {
@@ -32,7 +32,7 @@ public class SendArenaCommand extends CommandManager {
         }
 
         // Abre el menu para seleccionar el kit
-        new DuelMenu(ColorUtils.getPlayerMenuUtility(player), Bukkit.getPlayer(args[0])).open();
+        new DuelMenu(Utils.getPlayerMenuUtility(player), Bukkit.getPlayer(args[0])).open();
     }
 
     /*

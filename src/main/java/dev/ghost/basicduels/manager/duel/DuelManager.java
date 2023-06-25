@@ -1,7 +1,7 @@
 package dev.ghost.basicduels.manager.duel;
 
 import dev.ghost.basicduels.BasicDuels;
-import dev.ghost.basicduels.utils.ColorUtils;
+import dev.ghost.basicduels.utils.Utils;
 import dev.ghost.basicduels.utils.PlayerSavings;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -49,13 +49,13 @@ public class DuelManager {
         int duelID = duelRequests.size() + 1;
 
         if (sender == receiver) {
-            sender.sendMessage(ColorUtils.colorize("&cYou cannot duel yourself."));
+            sender.sendMessage(Utils.colorize("&cYou cannot duel yourself."));
             return;
         }
 
         if (isPlayerInDuel(receiver) || isPlayerInDuel(sender)) {
             sender.sendMessage(
-                    ColorUtils.colorize("&c" + receiver.getName() + " is already in a duel or you are already in one"));
+                    Utils.colorize("&c" + receiver.getName() + " is already in a duel or you are already in one"));
             return;
         }
 
@@ -64,7 +64,7 @@ public class DuelManager {
             Bukkit.getLogger().info("Sender: " + sender.getName());
             Bukkit.getLogger().info("Receiver: " + receiver.getName());
             sender.sendMessage(
-                    ColorUtils.colorize("&cYou already have a duel request pending with " + receiver.getName()));
+                    Utils.colorize("&cYou already have a duel request pending with " + receiver.getName()));
             return;
         }
 
@@ -73,7 +73,7 @@ public class DuelManager {
             return;
         }
 
-        sender.sendMessage(ColorUtils.colorize("&3You have sent a duel request to &f" + receiver.getName() + "&3."));
+        sender.sendMessage(Utils.colorize("&3You have sent a duel request to &f" + receiver.getName() + "&3."));
         TextComponent duelRequest = messageSendDuelRequest(sender, duelID);
 
         receiver.sendMessage(duelRequest);
@@ -85,9 +85,9 @@ public class DuelManager {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.PENDING) {
                 finishDuel(duelID);
                 sender.sendMessage(
-                        ColorUtils.colorize("&3The duel request to &f" + receiver.getName() + " &3has expired."));
+                        Utils.colorize("&3The duel request to &f" + receiver.getName() + " &3has expired."));
                 receiver.sendMessage(
-                        ColorUtils.colorize("&3The duel request from &f" + sender.getName() + " &3has expired."));
+                        Utils.colorize("&3The duel request from &f" + sender.getName() + " &3has expired."));
             }
         }, 20 * 30);
         return taskID;
@@ -95,7 +95,7 @@ public class DuelManager {
 
     private TextComponent messageSendDuelRequest(Player sender, int duelID) {
         TextComponent duelRequest = new TextComponent(
-                ColorUtils.colorize(("&3" + sender.getName() + " has sent you a duel request. Click to ")));
+                Utils.colorize(("&3" + sender.getName() + " has sent you a duel request. Click to ")));
 
         TextComponent accept = new TextComponent(ChatColor.GREEN + "/accept");
         accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/duel accept " + duelID));
@@ -107,11 +107,11 @@ public class DuelManager {
         deny.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new Text(ChatColor.RED + "Click to deny the duel request")));
 
-        duelRequest.addExtra(new TextComponent(ColorUtils.colorize("&3'")));
+        duelRequest.addExtra(new TextComponent(Utils.colorize("&3'")));
         duelRequest.addExtra(accept);
-        duelRequest.addExtra(new TextComponent(ColorUtils.colorize("&3' &3or '")));
+        duelRequest.addExtra(new TextComponent(Utils.colorize("&3' &3or '")));
         duelRequest.addExtra(deny);
-        duelRequest.addExtra(new TextComponent(ColorUtils.colorize("&3'&3.")));
+        duelRequest.addExtra(new TextComponent(Utils.colorize("&3'&3.")));
         return duelRequest;
     }
 
@@ -143,9 +143,9 @@ public class DuelManager {
         duel.setState(DuelState.COUNTDOWN);
 
         sender.sendMessage(
-                ColorUtils.colorize("&3You have accepted the duel request from &f" + receiver.getName() + "&3."));
+                Utils.colorize("&3You have accepted the duel request from &f" + receiver.getName() + "&3."));
         receiver.sendMessage(
-                ColorUtils.colorize("&3You have accepted the duel request from &f" + sender.getName() + "&3."));
+                Utils.colorize("&3You have accepted the duel request from &f" + sender.getName() + "&3."));
 
         PlayerSavings.getInstance().savePlayer(sender);
         PlayerSavings.getInstance().savePlayer(receiver);
@@ -164,16 +164,16 @@ public class DuelManager {
         sender.teleport(arena.getLocationPlayer1());
         receiver.teleport(arena.getLocationPlayer2());
 
-        sender.sendMessage(ColorUtils.colorize("&3The duel has started."));
-        receiver.sendMessage(ColorUtils.colorize("&3The duel has started."));
+        sender.sendMessage(Utils.colorize("&3The duel has started."));
+        receiver.sendMessage(Utils.colorize("&3The duel has started."));
         addItems(sender, receiver);
         
         int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.STARTED) {
                 finishDuel(duelID);
                 sender.sendMessage(
-                        ColorUtils.colorize("&3The duel has finished. "));
-                receiver.sendMessage(ColorUtils.colorize("&3The duel has finished. "));
+                        Utils.colorize("&3The duel has finished. "));
+                receiver.sendMessage(Utils.colorize("&3The duel has finished. "));
             }
         }, 20 * 60);
         duel.setTaskID(taskID);
@@ -191,9 +191,9 @@ public class DuelManager {
         duelRequests.remove(duelID);
 
         sender.sendMessage(
-                ColorUtils.colorize("&3" + receiver.getName() + " has denied your duel request."));
+                Utils.colorize("&3" + receiver.getName() + " has denied your duel request."));
         receiver.sendMessage(
-                ColorUtils.colorize("&3You have denied the duel request from &f" + sender.getName() + "&3."));
+                Utils.colorize("&3You have denied the duel request from &f" + sender.getName() + "&3."));
 
     }
 
