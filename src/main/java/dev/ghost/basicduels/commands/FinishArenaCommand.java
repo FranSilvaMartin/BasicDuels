@@ -1,4 +1,4 @@
-package dev.ghost.basicduels.commands.kitpvp;
+package dev.ghost.basicduels.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import dev.ghost.basicduels.BasicDuels;
+import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 
@@ -17,7 +18,7 @@ public class FinishArenaCommand extends CommandManager {
      * Este comando se usa para finalizar un duelo
      */
     public void onCommand(Player player, String[] args) {
-        sendMessage(player, "&aDuels have been finished!");
+        sendMessage(player, ConfigManager.getInstance().getMessage("duel_not_found", player));
         BasicDuels.getInstance().duelManager.finishDuel(player);
     }
 

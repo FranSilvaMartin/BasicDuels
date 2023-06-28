@@ -152,11 +152,8 @@ public class PlayerSavings {
             return;
 
         Location playerLoc = LocationUtils.configSectionToLocation(playerConfig.getConfigurationSection("location"));
-        List<?> contentList = (List<?>) playerConfig.get("inventory");
-        ItemStack[] inventoryContent = null;
-        if (contentList != null && !contentList.isEmpty() && contentList.get(0) instanceof ItemStack) {
-            inventoryContent = contentList.toArray(new ItemStack[0]);
-        }
+        List<ItemStack> contentList = (List<ItemStack>) playerConfig.get("inventory");
+        ItemStack[] inventoryContent = contentList.toArray(new ItemStack[contentList.size()]);
         double health = playerConfig.getDouble("health");
         int hunger = playerConfig.getInt("hunger");
         GameMode gameMode = GameMode.valueOf(playerConfig.getString("gamemode"));

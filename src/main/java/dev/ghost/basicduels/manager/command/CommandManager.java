@@ -8,6 +8,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import dev.ghost.basicduels.manager.ConfigManager;
+import dev.ghost.basicduels.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
@@ -84,7 +86,7 @@ public abstract class CommandManager extends Command {
      */
     public void sendMessage(CommandSender sender, String... messages) {
         for (String message : messages) {
-            sender.sendMessage(message);
+            sender.sendMessage(Utils.colorize(message));
         }
     }
 
@@ -96,7 +98,7 @@ public abstract class CommandManager extends Command {
      */
     public void sendInfoMessage(CommandSender sender, String... messages) {
         for (String message : messages) {
-            sender.sendMessage(ChatColor.AQUA + message);
+            sender.sendMessage(ChatColor.AQUA + Utils.colorize(message));
         }
     }
 
@@ -108,7 +110,7 @@ public abstract class CommandManager extends Command {
      */
     public void sendErrorMessage(CommandSender sender, String... messages) {
         for (String message : messages) {
-            sender.sendMessage(ChatColor.RED + message);
+            sender.sendMessage(ChatColor.RED + Utils.colorize(message));
         }
     }
 
@@ -121,7 +123,8 @@ public abstract class CommandManager extends Command {
      */
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sendErrorMessage(sender, "Only players can use this command");
+            Player player = (Player) sender;
+            sendErrorMessage(sender, ConfigManager.getInstance().getMessage("only_players", player));
             return true;
         }
 

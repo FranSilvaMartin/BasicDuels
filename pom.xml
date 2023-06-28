@@ -36,6 +36,7 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.12</version>
 		</dependency>
+		
 		<dependency>
     		<groupId>io.papermc.paper</groupId>
     		<artifactId>paper-api</artifactId>

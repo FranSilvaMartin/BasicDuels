@@ -1,13 +1,26 @@
 # LANGUAGE: Spanish
-
 # To use these placeholders, you need to download them from the PlaceholderAPI expansion Player!
 # Execute Command: /papi ecloud download Player & /papi reload
-broadcast:
-  announce: "%player_name% joined the lobby!"
-  open: "Event is open! Join using /lms join, GL HF!"
-  
-config: # dasdasd
-  count: 5
-#To use these placeholders, you need to do
-#wnload them from the PlaceholderAPI expansion cloud!
-#To use these placeholders, you need to download them from the PlaceholderAPI expansion cloud!
+# If you have any questions, you can contact me on Discord: https://discord.gg/4NfpbN3
+duel_not_found: '&cDuelo no encontrado o cancelado.'
+duel_test: '1 %basicduels_placeholder1% &c%prueba% hola 2 %test%'
+duel_finished: '&aEl duelo ha terminado.'
+player_not_found: '&cJugador no encontrado.'
+no_permission: '&cNo tienes permiso para usar este comando.'
+only_players: '&cSolo los jugadores pueden usar este comando.'
+duel_request_yourself: '&cNo puedes desafiarte a ti mismo.'
+player_in_duel: '&cEste jugador ya está en un duelo.'
+duel_request_already_sended: '&cYa has desafiado a este jugador.'
+no_arena_found: '&cNo hay arenas disponibles. Por favor, inténtelo de nuevo más tarde.'
+duel_request_sended: '&aHas desafiado a %basicduels_target% a un duelo.'
+duel_request_received: '&aHas recibido una solicitud de duelo de %basicduels_player%.'
+duel_request_expired_player: '&cLa solicitud de duelo hacia %basicduels_target% ha expirado.'
+duel_request_expired_target: '&cLa solicitud de duelo de %basicduels_player% ha expirado.'
+duel_request_accept_target: '&aHas aceptado el duelo de %basicduels_player%.'
+duel_request_accept: '&a%basicduels_target% ha aceptado tu duelo.'
+duel_request_denied_target: '&cHas rechazado el duelo de %basicduels_player%.'
+duel_request_denied: '&c%basicduels_target% ha rechazado tu duelo.'
+duel_started: '&aEl duelo ha comenzado.'
+duel_starting_countdown: '&aEl duelo comenzará en %basicduels_seconds% segundos.'
+duel_finished_countdown: '&aEl duelo terminará en %basicduels_seconds% segundos.'
+duel_finished_countdown_ended: '&aEl duelo ha terminado.'

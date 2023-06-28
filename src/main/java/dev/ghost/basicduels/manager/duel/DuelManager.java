@@ -1,6 +1,7 @@
 package dev.ghost.basicduels.manager.duel;
 
 import dev.ghost.basicduels.BasicDuels;
+import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.utils.Utils;
 import dev.ghost.basicduels.utils.PlayerSavings;
 import net.md_5.bungee.api.ChatColor;
@@ -49,45 +50,38 @@ public class DuelManager {
         int duelID = duelRequests.size() + 1;
 
         if (sender == receiver) {
-            sender.sendMessage(Utils.colorize("&cYou cannot duel yourself."));
+            sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_yourself", sender));
             return;
         }
 
         if (isPlayerInDuel(receiver) || isPlayerInDuel(sender)) {
-            sender.sendMessage(
-                    Utils.colorize("&c" + receiver.getName() + " is already in a duel or you are already in one"));
+            sender.sendMessage(ConfigManager.getInstance().getMessage("player_in_duel", sender));
             return;
         }
 
         if (isDuelPending(sender, receiver)) {
-            Bukkit.getLogger().info("Duel pending");
-            Bukkit.getLogger().info("Sender: " + sender.getName());
-            Bukkit.getLogger().info("Receiver: " + receiver.getName());
-            sender.sendMessage(
-                    Utils.colorize("&cYou already have a duel request pending with " + receiver.getName()));
+            sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_already_sended", sender));
             return;
         }
 
         if (!isArenaAvailable()) {
-            sender.sendMessage("There are no arenas available.");
+            sender.sendMessage(ConfigManager.getInstance().getMessage("no_arena_found", sender));
             return;
         }
+        addPendingDuel(duelID, sender, receiver);
 
-        sender.sendMessage(Utils.colorize("&3You have sent a duel request to &f" + receiver.getName() + "&3."));
+        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_sended", sender));
         TextComponent duelRequest = messageSendDuelRequest(sender, duelID);
 
         receiver.sendMessage(duelRequest);
-        addPendingDuel(duelID, sender, receiver);
     }
 
     private int countdown(Player sender, Player receiver, int duelID) {
         int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.PENDING) {
+                sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_expired_player", sender));
+                receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_expired_target", sender));
                 finishDuel(duelID);
-                sender.sendMessage(
-                        Utils.colorize("&3The duel request to &f" + receiver.getName() + " &3has expired."));
-                receiver.sendMessage(
-                        Utils.colorize("&3The duel request from &f" + sender.getName() + " &3has expired."));
             }
         }, 20 * 30);
         return taskID;
@@ -128,13 +122,13 @@ public class DuelManager {
         }
 
         Duel duel = getDuelRequest(duelID);
-        Player sender = duel.getPlayer1();
-        Player receiver = duel.getPlayer2();
+        Player sender = duel.getSender();
+        Player receiver = duel.getTarget();
         Arena arena = getArenaAvailable();
 
         if (arena == null) {
-            sender.sendMessage("There are no arenas available. Please try again later.");
-            receiver.sendMessage("There are no arenas available. Please try again later.");
+            sender.sendMessage(ConfigManager.getInstance().getMessage("no_arena_found", sender));
+            receiver.sendMessage(ConfigManager.getInstance().getMessage("no_arena_found", receiver));
             return;
         }
 
@@ -142,10 +136,8 @@ public class DuelManager {
         duel.setArena(arena);
         duel.setState(DuelState.COUNTDOWN);
 
-        sender.sendMessage(
-                Utils.colorize("&3You have accepted the duel request from &f" + receiver.getName() + "&3."));
-        receiver.sendMessage(
-                Utils.colorize("&3You have accepted the duel request from &f" + sender.getName() + "&3."));
+        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_accept", sender));
+        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_accept_target", sender));
 
         PlayerSavings.getInstance().savePlayer(sender);
         PlayerSavings.getInstance().savePlayer(receiver);
@@ -157,23 +149,23 @@ public class DuelManager {
 
         Duel duel = getDuelRequest(duelID);
         Arena arena = duel.getArena();
-        Player sender = duel.getPlayer1();
-        Player receiver = duel.getPlayer2();
+        Player sender = duel.getSender();
+        Player receiver = duel.getTarget();
         duel.setState(DuelState.STARTED);
 
         sender.teleport(arena.getLocationPlayer1());
         receiver.teleport(arena.getLocationPlayer2());
 
-        sender.sendMessage(Utils.colorize("&3The duel has started."));
-        receiver.sendMessage(Utils.colorize("&3The duel has started."));
+        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_starting_countdown", sender));
+        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_starting_countdown", sender));
         addItems(sender, receiver);
-        
+
         int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
             if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.STARTED) {
+
+                sender.sendMessage(ConfigManager.getInstance().getMessage("duel_finished_countdown", sender));
+                receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_finished_countdown", sender));
                 finishDuel(duelID);
-                sender.sendMessage(
-                        Utils.colorize("&3The duel has finished. "));
-                receiver.sendMessage(Utils.colorize("&3The duel has finished. "));
             }
         }, 20 * 60);
         duel.setTaskID(taskID);
@@ -185,15 +177,14 @@ public class DuelManager {
         }
 
         Duel duel = getDuelRequest(duelID);
-        Player sender = duel.getPlayer1();
-        Player receiver = duel.getPlayer2();
+        Player sender = duel.getSender();
+        Player receiver = duel.getTarget();
+
+        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_denied", sender));
+        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_denied_target", sender));
+
         duel.setState(DuelState.CALCELLED);
         duelRequests.remove(duelID);
-
-        sender.sendMessage(
-                Utils.colorize("&3" + receiver.getName() + " has denied your duel request."));
-        receiver.sendMessage(
-                Utils.colorize("&3You have denied the duel request from &f" + sender.getName() + "&3."));
 
     }
 
@@ -221,7 +212,7 @@ public class DuelManager {
 
     public boolean isPlayerInDuel(Player player) {
         for (Entry<Integer, Duel> entry : duelRequests.entrySet()) {
-            if (entry.getValue().getPlayer1().equals(player) || entry.getValue().getPlayer2().equals(player)) {
+            if (entry.getValue().getSender().equals(player) || entry.getValue().getTarget().equals(player)) {
                 if (entry.getValue().getState() != DuelState.PENDING) {
                     return true;
                 }
@@ -232,8 +223,8 @@ public class DuelManager {
 
     public boolean isDuelPending(Player player, Player receiver) {
         for (Entry<Integer, Duel> entry : duelRequests.entrySet()) {
-            if (entry.getValue().getPlayer1().equals(player) && entry.getValue().getPlayer2().equals(receiver)
-                    || entry.getValue().getPlayer1().equals(receiver) && entry.getValue().getPlayer2().equals(player)) {
+            if (entry.getValue().getSender().equals(player) && entry.getValue().getTarget().equals(receiver)
+                    || entry.getValue().getSender().equals(receiver) && entry.getValue().getTarget().equals(player)) {
                 return true;
             }
         }
@@ -242,7 +233,7 @@ public class DuelManager {
 
     public void finishDuel(Player player) {
         for (Entry<Integer, Duel> entry : duelRequests.entrySet()) {
-            if (entry.getValue().getPlayer1().equals(player) || entry.getValue().getPlayer2().equals(player)) {
+            if (entry.getValue().getSender().equals(player) || entry.getValue().getTarget().equals(player)) {
                 finishDuel(entry.getKey());
                 break;
             }
@@ -260,10 +251,20 @@ public class DuelManager {
 
         duel.getArena().setInUse(false);
 
-        PlayerSavings.getInstance().restorePlayer(duel.getPlayer1());
-        PlayerSavings.getInstance().restorePlayer(duel.getPlayer2());
+        PlayerSavings.getInstance().restorePlayer(duel.getSender());
+        PlayerSavings.getInstance().restorePlayer(duel.getTarget());
 
         Bukkit.getScheduler().cancelTask(duel.getTaskID());
+    }
+
+    // Get duel by player
+    public Duel getDuelByPlayer(Player player) {
+        for (Entry<Integer, Duel> entry : duelRequests.entrySet()) {
+            if (entry.getValue().getSender().equals(player) || entry.getValue().getTarget().equals(player)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     private void addItems(Player sender, Player receiver) {

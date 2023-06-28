@@ -1,4 +1,4 @@
-package dev.ghost.basicduels.commands.kitpvp;
+package dev.ghost.basicduels.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
-import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import net.md_5.bungee.api.ChatColor;
@@ -33,7 +32,6 @@ public class DuelCommand extends CommandManager {
                 String description = ChatColor.GRAY + command.getDescription();
                 sendInfoMessage(player, "/" + commandInfo.name() + " " + name + " " + usage + " - " + description);
             }
-            player.sendMessage(ConfigManager.getInstance().getMessage("broadcast.announce", player));
             return;
         }
 

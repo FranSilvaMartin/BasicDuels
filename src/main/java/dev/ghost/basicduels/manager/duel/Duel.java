@@ -5,15 +5,15 @@ import org.bukkit.entity.Player;
 public class Duel {
     
     private DuelState state;
-    private Player player1;
-    private Player player2;
+    private Player sender;
+    private Player target;
     private Arena arena;
     private int taskID;
 
-    public Duel(Player player1, Player player2) {
+    public Duel(Player sender, Player target) {
         this.state = DuelState.PENDING;
-        this.player1 = player1;
-        this.player2 = player2;
+        this.sender = sender;
+        this.target = target;
         this.taskID = -1;
     }
 
@@ -25,12 +25,12 @@ public class Duel {
         this.state = state;
     }
 
-    public Player getPlayer1() {
-        return player1;
+    public Player getSender() {
+        return sender;
     }
 
-    public Player getPlayer2() {
-        return player2;
+    public Player getTarget() {
+        return target;
     }
 
     public int getTaskID() {

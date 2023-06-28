@@ -1,13 +1,26 @@
 # LANGUAGE: English
-
 # To use these placeholders, you need to download them from the PlaceholderAPI expansion Player!
 # Execute Command: /papi ecloud download Player & /papi reload
-broadcast:
-  announce: "%player_name% joined the lobby!"
-  open: "Event is open! Join using /lms join, GL HF!"
-  
-config: # dasdasd
-  count: 5
-#To use these placeholders, you need to do
-#wnload them from the PlaceholderAPI expansion cloud!
-#To use these placeholders, you need to download them from the PlaceholderAPI expansion cloud!
+# If you have any questions, you can contact me on Discord: https://discord.gg/4NfpbN3
+duel_not_found: '&cDuel not found or canceled.'
+duel_test: '1 %basicduels_placeholder1% &c%prueba% hello 2 %test%'
+duel_finished: '&aThe duel has ended.'
+player_not_found: '&cPlayer not found.'
+no_permission: '&cYou do not have permission to use this command.'
+only_players: '&cOnly players can use this command.'
+duel_request_yourself: '&cYou cannot challenge yourself.'
+player_in_duel: '&cThis player is already in a duel.'
+duel_request_already_sended: '&cYou have already challenged this player.'
+no_arena_found: '&cNo arenas available. Please try again later.'
+duel_request_sended: '&aYou have challenged %basicduels_target% to a duel.'
+duel_request_received: '&aYou have received a duel request from %basicduels_player%.'
+duel_request_expired_player: '&cThe duel request to %basicduels_target% has expired.'
+duel_request_expired_target: '&cThe duel request from %basicduels_player% has expired.'
+duel_request_accept_target: '&aYou have accepted %basicduels_player%`s duel.'
+duel_request_accept: '&a%basicduels_target% has accepted your duel.'
+duel_request_denied_target: '&cYou have denied %basicduels_player%`s duel.'
+duel_request_denied: '&c%basicduels_target% has denied your duel.'
+duel_started: '&aThe duel has started.'
+duel_starting_countdown: '&aThe duel will start in %basicduels_seconds% seconds.'
+duel_finished_countdown: '&aThe duel will end in %basicduels_seconds% seconds.'
+duel_finished_countdown_ended: '&aThe duel has ended.'

@@ -130,7 +130,9 @@ public class ConfigManager {
                             + " in " + language + ".yml"));
         }
 
-        return PlaceholderAPI.setPlaceholders(player, confLang.getString(path));
+        String message = confLang.getString(path);
+        message = PlaceholderAPI.setPlaceholders(player, message);
+        return Utils.colorize(message);
     }
 
     public String getStringRaw(FileConfiguration conf, String path) {

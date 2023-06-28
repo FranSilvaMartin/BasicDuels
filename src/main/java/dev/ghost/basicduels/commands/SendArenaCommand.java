@@ -1,4 +1,4 @@
-package dev.ghost.basicduels.commands.kitpvp;
+package dev.ghost.basicduels.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.menusystem.menu.DuelMenu;
@@ -27,7 +28,7 @@ public class SendArenaCommand extends CommandManager {
 
         // Comprueba si el jugador esta conectado
         if (Bukkit.getPlayer(args[0]) == null) {
-            sendErrorMessage(player, "Jugador no encontrado.");
+            sendErrorMessage(player, ConfigManager.getInstance().getMessage("player_not_found", player));
             return;
         }
 

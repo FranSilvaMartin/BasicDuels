@@ -19,6 +19,7 @@ import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
 import dev.ghost.basicduels.manager.duel.DuelManager;
 import dev.ghost.basicduels.utils.Utils;
+import dev.ghost.basicduels.utils.BasicDuelsExpansion;
 import dev.ghost.basicduels.utils.PlayerSavings;
 
 public class BasicDuels extends JavaPlugin {
@@ -37,9 +38,9 @@ public class BasicDuels extends JavaPlugin {
             new PlayerSavings(this);
             setupSimpleCommandMap();
             registerConfig();
-
             registerCommands();
             registerListeners();
+            new BasicDuelsExpansion().register();
 
             Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
             Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
