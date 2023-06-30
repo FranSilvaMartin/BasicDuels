@@ -3,3 +3,8 @@ main: dev.ghost.basicduels.BasicDuels
 version: 0.0.1
 api-version: 1.15
 softdepend: [PlaceholderAPI]
+commands: 
+  spawn:
+    description: Spawn command
+    usage: /spawn
+    aliases: [bd]

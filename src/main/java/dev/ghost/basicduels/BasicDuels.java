@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
 import dev.ghost.basicduels.manager.ConfigManager;
+import dev.ghost.basicduels.manager.CoolDownManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
@@ -28,6 +29,7 @@ public class BasicDuels extends JavaPlugin {
     private PluginManager pluginManager;
     private static BasicDuels instance;
     public DuelManager duelManager;
+    public CoolDownManager coolDownManager;
 
     @Override
     public void onEnable() {
@@ -41,6 +43,9 @@ public class BasicDuels extends JavaPlugin {
             registerCommands();
             registerListeners();
             new BasicDuelsExpansion().register();
+            coolDownManager = new CoolDownManager(this);
+
+            Bukkit.getPluginCommand("spawn").setExecutor(new SpawnCommand(this));
 
             Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
             Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
@@ -143,6 +148,14 @@ public class BasicDuels extends JavaPlugin {
 
     public static BasicDuels getInstance() {
         return instance;
+    }
+
+    public DuelManager getDuelManager() {
+        return duelManager;
+    }
+
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
     }
 
 }
