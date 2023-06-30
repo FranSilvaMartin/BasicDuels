@@ -13,8 +13,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 
+import dev.ghost.basicduels.cooldowns.CooldownManager;
 import dev.ghost.basicduels.manager.ConfigManager;
-import dev.ghost.basicduels.manager.CoolDownManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
@@ -29,7 +29,7 @@ public class BasicDuels extends JavaPlugin {
     private PluginManager pluginManager;
     private static BasicDuels instance;
     public DuelManager duelManager;
-    public CoolDownManager coolDownManager;
+    public CooldownManager manager;
 
     @Override
     public void onEnable() {
@@ -37,13 +37,14 @@ public class BasicDuels extends JavaPlugin {
         Utils.sendConsoleMessage("&aStarting BasicDuels...");
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+
+            manager = new CooldownManager(this, 5);
+
             new PlayerSavings(this);
             setupSimpleCommandMap();
             registerConfig();
             registerCommands();
             registerListeners();
-            new BasicDuelsExpansion().register();
-            coolDownManager = new CoolDownManager(this);
 
             Bukkit.getPluginCommand("spawn").setExecutor(new SpawnCommand(this));
 
@@ -53,6 +54,7 @@ public class BasicDuels extends JavaPlugin {
             duelManager = new DuelManager(this);
             duelManager.addArena(arena);
             Utils.sendConsoleMessage("&aBasicDuels is ready");
+            new BasicDuelsExpansion().register();
         } else {
             getLogger().severe("Could not find PlaceholderAPI! This plugin is required.");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -154,8 +156,7 @@ public class BasicDuels extends JavaPlugin {
         return duelManager;
     }
 
-    public CoolDownManager getCoolDownManager() {
-        return coolDownManager;
+    public CooldownManager getCooldownManager() {
+        return manager;
     }
-
 }

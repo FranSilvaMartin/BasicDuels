@@ -4,43 +4,45 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.ChatColor;
-
-import java.util.HashMap;
+import dev.ghost.basicduels.cooldowns.Cooldown;
+import java.util.concurrent.TimeUnit;
 
 public class SpawnCommand implements CommandExecutor {
 
-    private final Plugin plugin;
-    private final HashMap<String, Long> cooldowns = new HashMap<>();
+    private final BasicDuels plugin;
 
-    public SpawnCommand(Plugin plugin) {
+    public SpawnCommand(BasicDuels plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
-            String[] args) {
-
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command!");
-            return true;
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            Cooldown cooldown = plugin.getCooldownManager().get(plugin.getCooldownManager().getTeleportCooldown(), player);
+            if (cooldown == null) {
+                Cooldown countdown = plugin.getCooldownManager().get(plugin.getCooldownManager().getTeleportCountdown(), player);
+                if (countdown == null) {
+                    countdown = plugin.getCooldownManager().create(plugin.getCooldownManager().getTeleportCountdown(), player, 5, TimeUnit.SECONDS)
+                            .whenStarted(() -> player.sendMessage("Teleporting in 5 seconds."))
+                            .addStep(1, () -> player.sendMessage("Teleporting in 4 seconds."))
+                            .addStep(2, () -> player.sendMessage("Teleporting in 3 seconds."))
+                            .addStep(3, () -> player.sendMessage("Teleporting in 2 seconds."))
+                            .addStep(4, () -> player.sendMessage("Teleporting in 1 seconds."))
+                            .whenCancelled(() -> player.sendMessage("Teleport cancelled."))
+                            
+                            .whenCompleted(() -> {
+                                player.sendMessage("Teleporting to spawn.");
+                                player.teleport(player.getWorld().getSpawnLocation());
+                                plugin.getCooldownManager().create(plugin.getCooldownManager().getTeleportCooldown(), player, 10, TimeUnit.SECONDS).start();
+                            });
+                    countdown.start();
+                }
+            } else {
+                player.sendMessage("This command will be available in " + cooldown.getTimeLeft() + " seconds");
+            }
         }
-
-        Player player = (Player) sender;
-
-        if (BasicDuels.getInstance().getCoolDownManager().isPlayerInCooldown(player)) {
-            player.sendMessage(ChatColor.RED + "You are in cooldown!");
-            player.sendMessage(ChatColor.RED + "Time left: "
-                    + BasicDuels.getInstance().getCoolDownManager().getCooldowns(player).toString());
-            return true;
-        }
-
-        BasicDuels.getInstance().getCoolDownManager().addPlayerToMap(player, 10);
-
-        player.sendMessage(ChatColor.GREEN + "Teleporting to spawn...");
         return true;
     }
 }
