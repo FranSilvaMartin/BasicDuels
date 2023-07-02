@@ -1,2 +1,4 @@
 # List of available languages: en, es, fr, de, it, nl, pl, pt, ru, zh
 language: es
+teleport_cooldown: 5
+teleport_countdown: 5

@@ -46,8 +46,6 @@ public class BasicDuels extends JavaPlugin {
             registerCommands();
             registerListeners();
 
-            Bukkit.getPluginCommand("spawn").setExecutor(new SpawnCommand(this));
-
             Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
             Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
             Arena arena = new Arena(1, "Oasis", location, location2);

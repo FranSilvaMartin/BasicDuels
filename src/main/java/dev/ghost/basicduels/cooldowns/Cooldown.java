@@ -115,7 +115,7 @@ public class Cooldown
      *
      * @return true if cancelled false if not
      */
-    boolean isCancelled()
+    public boolean isCancelled()
     {
         return cancelled;
     }
@@ -125,7 +125,7 @@ public class Cooldown
      *
      * @return true if completed false if not
      */
-    boolean isCompleted()
+    public boolean isCompleted()
     {
         return System.currentTimeMillis() > startTime + cooldown;
     }

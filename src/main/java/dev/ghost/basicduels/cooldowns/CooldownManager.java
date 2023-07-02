@@ -11,9 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 public class CooldownManager {
-    private final Map<CooldownCategory, Map<Object, Cooldown>> registry = new HashMap<>();
-    private CooldownCategory TELEPORT_COOLDOWN = new CooldownCategory();
-    private CooldownCategory TELEPORT_COUNTDOWN = new CooldownCategory();
+    private Map<CooldownCategory, Map<Object, Cooldown>> registry = new HashMap<>();
 
     /**
      * Create a new instance of CooldownManager
@@ -37,6 +35,19 @@ public class CooldownManager {
                 }
             }
         }, 0L, delay);
+
+        // Haz un for de registry
+        for (Map.Entry<CooldownCategory, Map<Object, Cooldown>> entry : registry.entrySet()) {
+            CooldownCategory category = entry.getKey();
+            Map<Object, Cooldown> cooldowns = entry.getValue();
+            for (Map.Entry<Object, Cooldown> entry2 : cooldowns.entrySet()) {
+                Object owner = entry2.getKey();
+                Cooldown cooldown = entry2.getValue();
+                if (cooldown.isCompleted() || cooldown.isCancelled()) {
+                    cooldowns.remove(owner);
+                }
+            }
+        }
     }
 
     /**
@@ -50,8 +61,8 @@ public class CooldownManager {
      * @param unit     TimeUnit used by the cooldown
      * @return the cooldown created
      */
-    public Cooldown create(@Nonnull CooldownCategory category, @Nonnull Object owner, int time,
-            @Nonnull TimeUnit unit) {
+    public Cooldown create(CooldownCategory category, Object owner, int time,
+            TimeUnit unit) {
         Map<Object, Cooldown> cooldowns = registry.computeIfAbsent(category, k -> new HashMap<>());
         return cooldowns.compute(owner, (k, v) -> new Cooldown(time, unit));
     }
@@ -63,29 +74,23 @@ public class CooldownManager {
      * @param owner    Owner of the cooldown
      * @return The cooldown mapped to category/owner or null if none
      */
-    public Cooldown get(@Nonnull CooldownCategory category, @Nonnull Object owner) {
+    public Cooldown get(CooldownCategory category, Object owner) {
         Map<Object, Cooldown> cooldowns = registry.get(category);
         return cooldowns != null ? cooldowns.get(owner) : null;
     }
 
-    /**
-     * Remove an existing cooldown
-     *
-     * @param category Category of the cooldown
-     * @param owner    Owner of the cooldown
-     * @return The cooldown removed or null if none
-     */
-    public Cooldown remove(@Nonnull CooldownCategory category, @Nonnull Object owner) {
-        Map<Object, Cooldown> cooldowns = registry.get(category);
-        return cooldowns != null ? cooldowns.remove(owner) : null;
+    // Find Cooldown by player
+    public Cooldown findCooldownByPlayer(Object owner) {
+        for (Map.Entry<CooldownCategory, Map<Object, Cooldown>> entry : registry.entrySet()) {
+            Map<Object, Cooldown> cooldowns = entry.getValue();
+            for (Map.Entry<Object, Cooldown> entry2 : cooldowns.entrySet()) {
+                Object owner2 = entry2.getKey();
+                Cooldown cooldown = entry2.getValue();
+                if (owner2 == owner) {
+                    return cooldown;
+                }
+            }
+        }
+        return null;
     }
-
-    public CooldownCategory getTeleportCooldown() {
-        return TELEPORT_COOLDOWN;
-    }
-
-    public CooldownCategory getTeleportCountdown() {
-        return TELEPORT_COUNTDOWN;
-    }
-
 }

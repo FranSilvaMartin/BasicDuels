@@ -1,6 +1,9 @@
 package dev.ghost.basicduels.manager.duel;
 
 import dev.ghost.basicduels.BasicDuels;
+import dev.ghost.basicduels.cooldowns.Cooldown;
+import dev.ghost.basicduels.cooldowns.CooldownCategory;
+import dev.ghost.basicduels.cooldowns.CooldownManager;
 import dev.ghost.basicduels.manager.ConfigManager;
 import dev.ghost.basicduels.utils.Utils;
 import dev.ghost.basicduels.utils.PlayerSavings;
@@ -10,7 +13,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,12 +21,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 public class DuelManager {
     private final Map<Integer, Arena> arenas;
     private final Map<Integer, Duel> duelRequests;
+    private final BasicDuels plugin;
 
     public DuelManager(BasicDuels plugin) {
+        this.plugin = plugin;
         this.duelRequests = new HashMap<>();
         this.arenas = new HashMap<>();
     }
@@ -68,23 +73,13 @@ public class DuelManager {
             sender.sendMessage(ConfigManager.getInstance().getMessage("no_arena_found", sender));
             return;
         }
+
         addPendingDuel(duelID, sender, receiver);
 
         sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_sended", sender));
         TextComponent duelRequest = messageSendDuelRequest(sender, duelID);
 
         receiver.sendMessage(duelRequest);
-    }
-
-    private int countdown(Player sender, Player receiver, int duelID) {
-        int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
-            if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.PENDING) {
-                sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_expired_player", sender));
-                receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_expired_target", sender));
-                finishDuel(duelID);
-            }
-        }, 20 * 30);
-        return taskID;
     }
 
     private TextComponent messageSendDuelRequest(Player sender, int duelID) {
@@ -111,8 +106,6 @@ public class DuelManager {
 
     private void addPendingDuel(int duelID, Player sender, Player receiver) {
         Duel duel = new Duel(sender, receiver);
-        int taskID = countdown(sender, receiver, duelID);
-        duel.setTaskID(taskID);
         duelRequests.put(duelID, duel);
     }
 
@@ -142,33 +135,69 @@ public class DuelManager {
         PlayerSavings.getInstance().savePlayer(sender);
         PlayerSavings.getInstance().savePlayer(receiver);
 
-        startDuel(duelID);
+        initDuel(duelID);
     }
 
-    public void startDuel(int duelID) {
-
+    public void initDuel(int duelID) {
         Duel duel = getDuelRequest(duelID);
-        Arena arena = duel.getArena();
+        Player sender = duel.getSender();
+        Player receiver = duel.getTarget();
+
+        CooldownCategory TELEPORT_COUNTDOWN = new CooldownCategory();
+        createTeleportCooldown(plugin, sender, duel, TELEPORT_COUNTDOWN);
+        createTeleportCooldown(plugin, receiver, duel, TELEPORT_COUNTDOWN).whenCompleted(() -> {
+            startDuel(duel);
+        });
+    }
+
+    public void startDuel(Duel duel) {
         Player sender = duel.getSender();
         Player receiver = duel.getTarget();
         duel.setState(DuelState.STARTED);
 
-        sender.teleport(arena.getLocationPlayer1());
-        receiver.teleport(arena.getLocationPlayer2());
+        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_started", sender));
+        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_started", receiver));
 
-        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_starting_countdown", sender));
-        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_starting_countdown", sender));
-        addItems(sender, receiver);
+        CooldownCategory TELEPORT_COUNTDOW3 = new CooldownCategory();
 
-        int taskID = Bukkit.getScheduler().scheduleSyncDelayedTask(BasicDuels.getInstance(), () -> {
-            if (duelRequests.containsKey(duelID) && duelRequests.get(duelID).getState() == DuelState.STARTED) {
+        createTeleportCooldown(plugin, sender, duel, TELEPORT_COUNTDOW3);
+        createTeleportCooldown(plugin, receiver, duel, TELEPORT_COUNTDOW3);
+    }
 
-                sender.sendMessage(ConfigManager.getInstance().getMessage("duel_finished_countdown", sender));
-                receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_finished_countdown", sender));
-                finishDuel(duelID);
+    public Cooldown createTeleportCooldown(BasicDuels plugin, Player player, Duel duel, CooldownCategory category) {
+        CooldownManager cooldownManager = plugin.getCooldownManager();
+        Cooldown countdown = cooldownManager.get(category, player);
+        if (countdown == null) {
+
+            Integer seconds = ConfigManager.getInstance().getConfig("config.yml").getInt("teleport_cooldown");
+            if (seconds == null || seconds < 1) {
+                Utils.sendConsoleMessage("&cInvalid teleport cooldown value. Using default value. (5 seconds)");
+                seconds = 5;
             }
-        }, 20 * 60);
-        duel.setTaskID(taskID);
+
+            countdown = cooldownManager.create(category, player, seconds, TimeUnit.SECONDS)
+                    .whenCancelled(() -> player.sendMessage("Teleport cancelled."))
+                    .whenCompleted(() -> {
+                        player.sendMessage("Teletransportando al duelo.");
+                        if (duel.getSender() == player) {
+                            player.teleport(duel.getArena().getLocationPlayer1());
+                        } else {
+                            player.teleport(duel.getArena().getLocationPlayer2());
+                        }
+                    });
+
+            int countdownTime = seconds;
+            for (int i = 1; i <= seconds; i++) {
+                final int stepTime = countdownTime;
+                countdown.addStep(i, () -> player.sendMessage("Teleporting in " + stepTime + " seconds."));
+                countdownTime--;
+            }
+
+            countdown.start();
+        } else {
+            player.sendMessage("You already have a teleport countdown.");
+        }
+        return countdown;
     }
 
     public void denyDuelRequest(int duelID) {
@@ -181,7 +210,7 @@ public class DuelManager {
         Player receiver = duel.getTarget();
 
         sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_denied", sender));
-        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_denied_target", sender));
+        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_denied_target", receiver));
 
         duel.setState(DuelState.CALCELLED);
         duelRequests.remove(duelID);
@@ -253,8 +282,6 @@ public class DuelManager {
 
         PlayerSavings.getInstance().restorePlayer(duel.getSender());
         PlayerSavings.getInstance().restorePlayer(duel.getTarget());
-
-        Bukkit.getScheduler().cancelTask(duel.getTaskID());
     }
 
     // Get duel by player

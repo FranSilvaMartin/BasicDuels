@@ -8,13 +8,11 @@ public class Duel {
     private Player sender;
     private Player target;
     private Arena arena;
-    private int taskID;
 
     public Duel(Player sender, Player target) {
         this.state = DuelState.PENDING;
         this.sender = sender;
         this.target = target;
-        this.taskID = -1;
     }
 
     public DuelState getState() {
@@ -32,15 +30,7 @@ public class Duel {
     public Player getTarget() {
         return target;
     }
-
-    public int getTaskID() {
-        return taskID;
-    }
-
-    public void setTaskID(int taskID) {
-        this.taskID = taskID;
-    }
-
+    
     public Arena getArena() {
         return arena;
     }
