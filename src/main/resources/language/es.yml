@@ -24,3 +24,8 @@ duel_started: '&aEl duelo ha comenzado.'
 duel_starting_countdown: '&aEl duelo comenzará en %basicduels_seconds% segundos.'
 duel_finished_countdown: '&aEl duelo terminará en %basicduels_seconds% segundos.'
 duel_finished_countdown_ended: '&aEl duelo ha terminado.'
+duel_kit_selected: '&aHas seleccionado el kit %basicduels_kit%.'
+
+kit_not_found: '&cKit no encontrado.'
+kit_list: '&cLista de kits: %basicduels_kits_list%'
+kits_not_found: '&cNo hay kits disponibles. Por favor, inténtelo de nuevo más tarde.'

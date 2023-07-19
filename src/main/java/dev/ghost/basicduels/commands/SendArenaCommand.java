@@ -1,12 +1,16 @@
 package dev.ghost.basicduels.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import dev.ghost.basicduels.manager.ConfigManager;
+import dev.ghost.basicduels.manager.KitManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.menusystem.menu.DuelMenu;
@@ -31,6 +35,19 @@ public class SendArenaCommand extends CommandManager {
             sendErrorMessage(player, ConfigManager.getInstance().getMessage("player_not_found", player));
             return;
         }
+
+        Map<String, ItemStack> kits = KitManager.getKits();
+
+        for (Map.Entry<String, ItemStack> kit : kits.entrySet()) {
+            ItemStack item = kit.getValue();
+            String name = kit.getKey();
+
+            player.getInventory().addItem(item);
+            player.updateInventory();
+
+            player.sendMessage(name);
+        }
+        
 
         // Abre el menu para seleccionar el kit
         new DuelMenu(Utils.getPlayerMenuUtility(player), Bukkit.getPlayer(args[0])).open();

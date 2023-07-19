@@ -6,22 +6,27 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+import dev.ghost.basicduels.commands.kit.CreateKitCommand;
+import dev.ghost.basicduels.commands.kit.DeleteKitCommand;
+import dev.ghost.basicduels.commands.kit.GiveKitCommand;
+import dev.ghost.basicduels.commands.kit.ListKitCommand;
+import dev.ghost.basicduels.manager.KitManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import net.md_5.bungee.api.ChatColor;
 
-@CommandInfo(name = "duel", desc = "All Duels commands", aliases = { "duels" }, usage = "<name>")
-public class DuelCommand extends CommandManager {
+@CommandInfo(name = "kit", isSubCommand = true, desc = "Kit manager", perm = "kitpvp.commands.createarena", usage = "<create, delete, give, list>")
+public class KitCommand extends CommandManager {
+
     private List<CommandManager> subCommands = new ArrayList<CommandManager>();
     private CommandInfo commandInfo = getClass().getAnnotation(CommandInfo.class);
 
     // Constructor de la clase y añade los sub-comandos
-    public DuelCommand() {
-        subCommands.add(new SendArenaCommand());
-        subCommands.add(new FinishArenaCommand());
-        subCommands.add(new AcceptArenaCommand());
-        subCommands.add(new DenyArenaCommand());
-        subCommands.add(new KitCommand());
+    public KitCommand() {
+        subCommands.add(new CreateKitCommand());
+        subCommands.add(new DeleteKitCommand());
+        subCommands.add(new GiveKitCommand());
+        subCommands.add(new ListKitCommand());
     }
 
     // Ejecuta el comando
@@ -32,7 +37,12 @@ public class DuelCommand extends CommandManager {
                 String name = ChatColor.GRAY + command.getName();
                 String usage = ChatColor.GRAY + command.getUsage();
                 String description = ChatColor.GRAY + command.getDescription();
-                sendInfoMessage(player, "/" + commandInfo.name() + " " + name + " " + usage + " - " + description);
+
+                if (command.getUsage().equals("")) {
+                    sendInfoMessage(player, "/duel " + commandInfo.name() + " " + name + " - " + description);
+                } else {
+                    sendInfoMessage(player, "/duel " + commandInfo.name() + " " + name + " " + usage + " - " + description);
+                }
             }
             return;
         }
@@ -60,18 +70,19 @@ public class DuelCommand extends CommandManager {
      * Devuelve una lista de sugerencias para el comando
      */
     public List<String> onTabComplete(Player p, String[] args) {
-        if (args.length == 1) {
+
+        if (args.length == 2) {
             List<String> suggestions = new ArrayList<String>();
             for (CommandManager command : subCommands)
                 suggestions.add(command.getName());
             return suggestions;
         }
 
-        if (args.length > 1)
-            for (CommandManager command : subCommands)
-                if (command.getName().equalsIgnoreCase(args[0]))
-                    return command.onTabComplete(p, args);
-
+        if (!args[1].equalsIgnoreCase("create")) {
+            List<String> suggestions = KitManager.getKitIds();
+            return suggestions;
+        }
         return null;
     }
+
 }

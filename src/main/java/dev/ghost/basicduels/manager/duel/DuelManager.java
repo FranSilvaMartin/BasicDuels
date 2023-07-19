@@ -14,6 +14,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -132,9 +133,6 @@ public class DuelManager {
         sender.sendMessage(ConfigManager.getInstance().getMessage("duel_request_accept", sender));
         receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_request_accept_target", sender));
 
-        PlayerSavings.getInstance().savePlayer(sender);
-        PlayerSavings.getInstance().savePlayer(receiver);
-
         initDuel(duelID);
     }
 
@@ -153,15 +151,25 @@ public class DuelManager {
     public void startDuel(Duel duel) {
         Player sender = duel.getSender();
         Player receiver = duel.getTarget();
-        duel.setState(DuelState.STARTED);
+        PlayerSavings.getInstance().savePlayer(sender);
+        PlayerSavings.getInstance().savePlayer(receiver);
 
-        sender.sendMessage(ConfigManager.getInstance().getMessage("duel_started", sender));
-        receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_started", receiver));
+        sender.teleport(duel.getArena().getLocationPlayer1());
+        receiver.teleport(duel.getArena().getLocationPlayer2());
 
-        CooldownCategory TELEPORT_COUNTDOW3 = new CooldownCategory();
+        duel.setState(DuelState.STARTING);
+        addItems(sender, receiver);
 
-        createTeleportCooldown(plugin, sender, duel, TELEPORT_COUNTDOW3);
-        createTeleportCooldown(plugin, receiver, duel, TELEPORT_COUNTDOW3);
+        sender.sendMessage("El duelo comenzara en 5 segundos");
+        receiver.sendMessage("El duelo comenzara en 5 segundos");
+
+        CooldownCategory STARTING = new CooldownCategory();
+        createTeleportCooldown(plugin, sender, duel, STARTING);
+        createTeleportCooldown(plugin, receiver, duel, STARTING).whenCompleted(() -> {
+            duel.setState(DuelState.STARTED);
+            sender.sendMessage(ConfigManager.getInstance().getMessage("duel_started", sender));
+            receiver.sendMessage(ConfigManager.getInstance().getMessage("duel_started", receiver));
+        });
     }
 
     public Cooldown createTeleportCooldown(BasicDuels plugin, Player player, Duel duel, CooldownCategory category) {
@@ -179,11 +187,6 @@ public class DuelManager {
                     .whenCancelled(() -> player.sendMessage("Teleport cancelled."))
                     .whenCompleted(() -> {
                         player.sendMessage("Teletransportando al duelo.");
-                        if (duel.getSender() == player) {
-                            player.teleport(duel.getArena().getLocationPlayer1());
-                        } else {
-                            player.teleport(duel.getArena().getLocationPlayer2());
-                        }
                     });
 
             int countdownTime = seconds;
@@ -214,7 +217,6 @@ public class DuelManager {
 
         duel.setState(DuelState.CALCELLED);
         duelRequests.remove(duelID);
-
     }
 
     public boolean isArenaAvailable() {

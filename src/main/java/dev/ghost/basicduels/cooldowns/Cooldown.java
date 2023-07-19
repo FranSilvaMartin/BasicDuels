@@ -54,7 +54,6 @@ public class Cooldown
      */
     public Cooldown whenCancelled(Runnable cancelRunnable)
     {
-        Bukkit.getConsoleSender().sendMessage("whenCancelled");
         this.cancelRunnable = cancelRunnable;
         return this;
     }

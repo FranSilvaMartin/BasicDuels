@@ -15,6 +15,7 @@ import org.reflections.Reflections;
 
 import dev.ghost.basicduels.cooldowns.CooldownManager;
 import dev.ghost.basicduels.manager.ConfigManager;
+import dev.ghost.basicduels.manager.KitManager;
 import dev.ghost.basicduels.manager.command.CommandInfo;
 import dev.ghost.basicduels.manager.command.CommandManager;
 import dev.ghost.basicduels.manager.duel.Arena;
@@ -46,9 +47,10 @@ public class BasicDuels extends JavaPlugin {
             registerCommands();
             registerListeners();
 
-            Location location = new Location(Bukkit.getWorld("world"), 3150, 63.00, 4106);
-            Location location2 = new Location(Bukkit.getWorld("world"), 3162, 63.00, 4106);
+            Location location = new Location(Bukkit.getWorld("world"), 3162.50, 63.00, 4106.47, 90, 0.1f);
+            Location location2 = new Location(Bukkit.getWorld("world"), 3150.52, 63.00, 4106.47, -90, -0.07f);
             Arena arena = new Arena(1, "Oasis", location, location2);
+            KitManager kitManager = new KitManager(this);
             duelManager = new DuelManager(this);
             duelManager.addArena(arena);
             Utils.sendConsoleMessage("&aBasicDuels is ready");
@@ -105,6 +107,7 @@ public class BasicDuels extends JavaPlugin {
     private void registerConfig() {
         ConfigManager.getInstance().setPlugin(this);
         ConfigManager.getInstance().getConfig("config.yml");
+        ConfigManager.getInstance().getConfig("kits.yml");
 
         File languageFolder = new File(this.getDataFolder() + File.separator + "language");
         if (!languageFolder.exists()) {

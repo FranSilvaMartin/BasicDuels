@@ -13,6 +13,7 @@ import dev.ghost.basicduels.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Clase abstracta para manejar los comandos
@@ -90,6 +91,11 @@ public abstract class CommandManager extends Command {
         }
     }
 
+    public void sendCustomMessage(CommandSender sender, String path) {
+        Player player = (Player) sender;
+        sender.sendMessage(ConfigManager.getInstance().getMessage(path, player));
+    }
+
     /**
      * Envia un mensaje al usuario con el color azul, para indicar información
      * 
@@ -154,5 +160,6 @@ public abstract class CommandManager extends Command {
     }
 
     public abstract void onCommand(Player p, String[] args);
+
     public abstract List<String> onTabComplete(Player p, String[] args);
 }

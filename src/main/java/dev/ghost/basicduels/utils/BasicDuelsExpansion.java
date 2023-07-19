@@ -1,9 +1,12 @@
 package dev.ghost.basicduels.utils;
 
+import java.util.List;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import dev.ghost.basicduels.BasicDuels;
+import dev.ghost.basicduels.manager.KitManager;
 import dev.ghost.basicduels.manager.duel.Duel;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
@@ -41,21 +44,26 @@ public class BasicDuelsExpansion extends PlaceholderExpansion {
             return "";
         }
 
-        Duel duel = BasicDuels.getInstance().duelManager.getDuelByPlayer(player.getPlayer());
-        if (duel == null) {
-            return "No Duel";
-        }
-
         if (params.equalsIgnoreCase("name")) {
-            return player == null ? null : player.getName(); // "name" requires the player to be valid
+            return player == null ? null : player.getName();
         }
 
-        if (params.equalsIgnoreCase("player")) {
-            return duel.getSender().getName();
+        if (params.equalsIgnoreCase("kits_list")) {
+            List<String> kitList = KitManager.getKitIds();
+            return kitList.toString().replace("[", "").replace("]", "") + "31231.";
         }
 
-        if (params.equalsIgnoreCase("target")) {
-            return duel.getTarget().getName();
+        Duel duel = BasicDuels.getInstance().duelManager.getDuelByPlayer(player.getPlayer());
+        if (duel != null) {
+            if (params.equalsIgnoreCase("player")) {
+                return duel.getSender().getName();
+            }
+
+            if (params.equalsIgnoreCase("target")) {
+                return duel.getTarget().getName();
+            }
+        } else {
+            return "No Duel";
         }
 
         return null;
